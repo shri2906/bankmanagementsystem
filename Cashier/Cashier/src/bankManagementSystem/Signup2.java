@@ -1,24 +1,23 @@
 package bankManagementSystem;
 
+import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
-import javax.swing.*;
 import java.util.HashMap;
 import java.sql.*;
 
 public class Signup2 extends JFrame implements ActionListener {
 
-    JLabel l1,l2,l3,l4,l5,l6,l7,l8,l9,l10,l11,l12,l13;
-    JButton b1,b2;
-    JRadioButton r1,r2,r3,r4;
-    JTextField t1,t2,t3;
-    JComboBox c1,c2,c3,c4,c5;
+    JLabel l1, l2, l3, l4, l5, l6, l7, l8, l9, l10, l11, l12, l13;
+    JButton b1, b2;
+    JRadioButton r1, r2, r3, r4;
+    JTextField t1, t2, t3;
+    JComboBox<String> c1, c2, c3, c4, c5;
     String formno;
 
     HashMap<String, String> formData;
 
     Signup2(String formno, HashMap<String, String> formData) {
-
         ImageIcon i1 = new ImageIcon(ClassLoader.getSystemResource("icons/logo.jpg"));
         Image i2 = i1.getImage().getScaledInstance(100, 100, Image.SCALE_DEFAULT);
         ImageIcon i3 = new ImageIcon(i2);
@@ -31,7 +30,7 @@ public class Signup2 extends JFrame implements ActionListener {
 
         setTitle("NEW ACCOUNT APPLICATION FORM - PAGE 2");
 
-        l1 = new JLabel("Page 2: Additonal Details");
+        l1 = new JLabel("Page 2: Additional Details");
         l1.setFont(new Font("Raleway", Font.BOLD, 22));
 
         l2 = new JLabel("Religion:");
@@ -110,32 +109,34 @@ public class Signup2 extends JFrame implements ActionListener {
         groupstatus.add(r4);
 
         String religion[] = {"Hindu","Muslim","Sikh","Christian","Other"};
-        c1 = new JComboBox(religion);
+        c1 = new JComboBox<>(religion);
         c1.setBackground(Color.WHITE);
         c1.setFont(new Font("Raleway", Font.BOLD, 14));
 
         String category[] = {"General","OBC","SC","ST","Other"};
-        c2 = new JComboBox(category);
+        c2 = new JComboBox<>(category);
         c2.setBackground(Color.WHITE);
         c2.setFont(new Font("Raleway", Font.BOLD, 14));
 
         String income[] = {"Null","<1,50,000","<2,50,000","<5,00,000","Upto 10,00,000","Above 10,00,000"};
-        c3 = new JComboBox(income);
+        c3 = new JComboBox<>(income);
         c3.setBackground(Color.WHITE);
         c3.setFont(new Font("Raleway", Font.BOLD, 14));
 
         String education[] = {"Non-Graduate","Graduate","Post-Graduate","Doctrate","Others"};
-        c4 = new JComboBox(education);
+        c4 = new JComboBox<>(education);
         c4.setBackground(Color.WHITE);
         c4.setFont(new Font("Raleway", Font.BOLD, 14));
 
-        String occupation[] = {"Salaried","Self-Employmed","Business","Student","Retired","Others"};
-        c5 = new JComboBox(occupation);
+        String occupation[] = {"Salaried","Self-Employed","Business","Student","Retired","Others"};
+        c5 = new JComboBox<>(occupation);
         c5.setBackground(Color.WHITE);
         c5.setFont(new Font("Raleway", Font.BOLD, 14));
 
+
         setLayout(null);
-        
+
+
         l12.setBounds(700,10,60,30);
         add(l12);
 
@@ -231,15 +232,15 @@ public class Signup2 extends JFrame implements ActionListener {
                 String eaccount = r3.isSelected() ? "Yes" : "No";
 
                 try {
-                    if (t2.getText().equals("")) {
-                        JOptionPane.showMessageDialog(null, "Fill all the required fields");
-                    } else {
+                    if (validateAadhar(aadhar) && validatePAN(pan)) { // Check Aadhar and PAN validation
                         Conn c1 = new Conn();
                         String q1 = "insert into signup2 values('" + formData.get("formno") + "','" + religion + "','" + category + "','" + income + "','" + education + "','" + occupation + "','" + t1.getText() + "','" + t2.getText() + "','" + scitizen + "','" + eaccount + "')";
                         c1.s.executeUpdate(q1);
 
                         new Signup3(formData.get("formno")).setVisible(true);
                         setVisible(false);
+                    } else {
+                        JOptionPane.showMessageDialog(null, "Invalid Aadhar or PAN number");
                     }
                 } catch (Exception ex) {
                     ex.printStackTrace();
@@ -260,6 +261,26 @@ public class Signup2 extends JFrame implements ActionListener {
         setSize(850, 750);
         setLocation(500, 120);
         setVisible(true);
+    }
+
+    // Method to validate Aadhar card number
+    public boolean validateAadhar(String aadhar) {
+        // Aadhar number must be 12 digits long and contain only digits
+        if (aadhar.matches("\\d{12}")) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    // Method to validate PAN card number
+    public boolean validatePAN(String pan) {
+        // PAN number must be in the format ABCDE1234F where ABCDE can be any 5 characters, 1234 is any 4 digits, and F is any character
+        if (pan.matches("[A-Z]{5}[0-9]{4}[A-Z]{1}")) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     public static void main(String[] args) {
